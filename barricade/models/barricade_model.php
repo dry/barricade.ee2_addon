@@ -13,7 +13,7 @@ class Barricade_model extends CI_Model {
 	{
 		$updated = FALSE;
 		
-		$this->EE->where('member_id', $member_id);
+		$this->EE->db->where('member_id', $member_id);
 		$this->EE->db->update('members', array('group_id' => 2));
 		
 		if ($this->EE->db->affected_rows() == 1)
@@ -28,7 +28,7 @@ class Barricade_model extends CI_Model {
 	{
 		$this->EE->lang->loadfile('barricade');
 		$this->EE->load->library('logger');
-		$this->EE->logger->log_action(sprintf(lang('quarantined')), $data['username'], $member_id);
+		$this->EE->logger->log_action(sprintf(lang('quarantined'), $data['username'], $member_id));
 	}
 }
 /* End of file barricade_model.php */

@@ -5,7 +5,7 @@
  * @copyright	Copyright (c) 2010 Purple Dogfish Ltd
  * @license		http://www.purple-dogfish.co.uk/licence/free
  * @link		http://www.purple-dogfish.co.uk/free-stuff/barricade
- * @since		Version 2.1.
+ * @since		Version 0.1
  * 
  */
 
@@ -20,7 +20,7 @@ class Barricade_ext {
 
 	public $name				= 'Barricade';
 	public $version			= '0.9';
-	public $description		= 'Query member registrations against the SpamForumSpam database';
+	public $description		= 'Query member registrations against the spamforumspam.com database';
 	public $settings_exist	= 'n';
 	public $docs_url			= 'http://www.purple-dogfish.co.uk/free-stuff/barricade';
 		
@@ -44,7 +44,7 @@ class Barricade_ext {
 			$this->EE->load->model('barricade_model', 'barricade');
 			$quarantined = $this->EE->barricade->quarantine_member($member_id);
 		}
-		
+
 		if ($quarantined)
 		{
 			$this->EE->barricade->log($data, $member_id);
@@ -71,9 +71,9 @@ class Barricade_ext {
 		
 		if ($response->success)
 		{
-			$email = $response->email['appears'];
-			$ip = $response->ip['appears'];
-			$username = $response->username['appears'];
+			$email = $response->email->appears;
+			$ip = $response->ip->appears;
+			$username = $response->username->appears;
 			
 			if ($email OR ($ip AND $username))
 			{
@@ -124,8 +124,6 @@ class Barricade_ext {
 		$this->EE->db->where('class', __CLASS__);
     	$this->EE->db->delete('extensions');
 	}
-	
-
 }
 /* End of file ext.barricade.php */
 /* Location: ./system/expressionengine/third_party/barricade/ext.barricade.php */
