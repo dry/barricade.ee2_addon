@@ -37,6 +37,7 @@ class Barricade_ext {
 	
 	public function check_registration($data, $member_id)
 	{
+		$response = FALSE;
 		$quarantined = FALSE;
 		$response = $this->get_response($data);
 		
@@ -59,9 +60,16 @@ class Barricade_ext {
 			$$key = $value;
 		}
 
-		$xml = file_get_contents('http://stopforumspam.com/api?username='.$username.'&ip='.$ip_address.'&email='.urlencode($email).'&f=json');
-
-		return $this->parse_response($xml);
+		try
+		{
+			$xml = file_get_contents('http://stopforumspam.com/api?username='.$username.'&ip='.$ip_address.'&email='.urlencode($email).'&f=json');
+			return $this->parse_response($xml);
+		}
+		catch(Exception $e)
+		{
+			$this->EE->load->model('barricade_model', 'barricade');
+			$this->EE->barricade->log($e->getMessage());
+		}
 	}
 
 	private function parse_response($xml)
