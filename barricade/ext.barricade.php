@@ -12,17 +12,17 @@
 /**
  * Changelog
  * ---------------------------------------------------------
- * Version 0.1 201010
+ * Version 0.1 20101023
  * Initial public release
  * * ---------------------------------------------------------
  */
 class Barricade_ext {
 
-	public $name				= 'Barricade';
-	public $version			= '0.9';
-	public $description		= 'Query member registrations against the spamforumspam.com database';
-	public $settings_exist	= 'n';
-	public $docs_url			= 'http://www.purple-dogfish.co.uk/free-stuff/barricade';
+	public $name = 'Barricade';
+	public $version = '0.9';
+	public $description = 'Query member registrations against the spamforumspam.com database';
+	public $settings_exist = 'n';
+	public $docs_url = 'http://www.purple-dogfish.co.uk/free-stuff/barricade';
 		
 	public $settings = array();
 	
@@ -31,7 +31,8 @@ class Barricade_ext {
 	public function __construct($settings = '')
 	{
 		$this->EE =& get_instance();
-    	$this->settings = $settings;
+		$this->settings = $settings;
+		$this->setup_donation_button();
 	}
 	
 	public function check_registration($data, $member_id)
@@ -83,20 +84,32 @@ class Barricade_ext {
 		
 		return $spammer;
 	}
+	
+	private function setup_donation_button()
+	{
+		$this->name .=<<<DONATE
+&nbsp;&nbsp;<form style="display: inline;" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="PX3U6RMHL84JY">
+<input style="vertical-align: middle;" height="18" type="image" src="https://www.paypal.com/en_GB/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online.">
+<img alt="" border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1">
+</form>
+DONATE;
+	}
 
 	public function activate_extension()
 	{
 		$data = array();
 
 		$data['class']			= __CLASS__;
-        $data['method']			= "check_registration";
-        $data['hook']     	    = "member_member_register";
-        $data['settings']	    = "";
+		$data['method']			= "check_registration";
+		$data['hook']     	    = "member_member_register";
+		$data['settings']	    = "";
 		$data['priority']	    = 10;
 		$data['version']		= $this->version;
 		$data['enabled']		= "y";
 		
-    	$this->EE->db->insert('extensions', $data);
+		$this->EE->db->insert('extensions', $data);
 
 	}
 
@@ -122,7 +135,7 @@ class Barricade_ext {
 	public function disable_extension()
 	{
 		$this->EE->db->where('class', __CLASS__);
-    	$this->EE->db->delete('extensions');
+		$this->EE->db->delete('extensions');
 	}
 }
 /* End of file ext.barricade.php */
