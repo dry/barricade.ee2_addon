@@ -12,7 +12,7 @@
 /**
  * Changelog
  * ---------------------------------------------------------
- * Version 0.1 20101023
+ * Version 0.9 20101023
  * Initial public release
  * * ---------------------------------------------------------
  */
@@ -21,7 +21,7 @@ class Barricade_ext {
 	public $name = 'Barricade';
 	public $version = '0.9';
 	public $description = 'Query member registrations against the spamforumspam.com database';
-	public $settings_exist = 'n';
+	public $settings_exist = 'y';
 	public $docs_url = 'http://www.purple-dogfish.co.uk/free-stuff/barricade';
 		
 	public $settings = array();
@@ -35,6 +35,33 @@ class Barricade_ext {
 		$this->setup_donation_button();
 	}
 	
+	/**
+	 * Settings
+	 *
+	 * Set up the extension settings
+	 *
+	 * @access	public
+	 * @return	array	$settings	Settings
+	 */
+	public function settings()
+	{
+		$settings = array();
+
+		$settings['barricade_updater_enabled'] = array('s', array('n' => lang('no'), 'y' => lang('yes')), 'n');
+
+		if ( ! isset($this->settings['barricade_updater_access_key']) OR $this->settings['barricade_updater_access_key'] == '')
+		{
+			$instructions = sprintf(lang('barricade_get_an_access_key'), $this->EE->config->item('site_url'));
+			$settings['barricade_updater_access_key'] = array('t', array('rows' => 5), $instructions);
+		}
+		else
+		{
+			$settings['barricade_updater_access_key'] = array('i', '', '');
+		}
+
+		return $settings;
+	}
+
 	public function check_registration($data, $member_id)
 	{
 		$response = FALSE;
@@ -105,20 +132,27 @@ class Barricade_ext {
 DONATE;
 	}
 
+	/**
+	 * Activate Extension
+	 *
+	 * Insert the hook details into the database
+	 *
+	 * @access	public
+	 * @return	void
+	 */
 	public function activate_extension()
 	{
-		$data = array();
+		$data = array(
+			'class' => __CLASS__,
+			'method' => 'check_registration',
+			'hook' => 'member_member_register',
+			'settings' => serialize($this->settings),
+			'priority' => 10,
+			'version' => $this->version,
+			'enabled' => 'y'
+		);
 
-		$data['class']			= __CLASS__;
-		$data['method']			= "check_registration";
-		$data['hook']     	    = "member_member_register";
-		$data['settings']	    = "";
-		$data['priority']	    = 10;
-		$data['version']		= $this->version;
-		$data['enabled']		= "y";
-		
 		$this->EE->db->insert('extensions', $data);
-
 	}
 
 	public function update_extension($current = '')

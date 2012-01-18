@@ -60,7 +60,7 @@ class Barricade_model extends CI_Model {
 	{
 		$this->EE->lang->loadfile('barricade');
 		$this->EE->load->library('logger');
-		$this->EE->logger->log_action(sprintf(lang('quarantined'), $data['username'], $member_id));
+		$this->EE->logger->log_action(sprintf(lang('barricade_quarantined'), $data['username'], $member_id));
 	}
 }
 /* End of file barricade_model.php */
