@@ -36,7 +36,12 @@ class Barricade_model extends CI_Model {
 		$updated = FALSE;
 		
 		$this->EE->db->where('member_id', $member_id);
-		$this->EE->db->update('members', array('group_id' => 2));
+		$this->EE->db->update(
+			'members',
+			array(
+				'group_id' => $this->config_get('barricade', 'barricade_banned_group', 2)
+			)
+		);
 		
 		if ($this->EE->db->affected_rows() == 1)
 		{
@@ -70,6 +75,29 @@ class Barricade_model extends CI_Model {
 		$response = $this->EE->cerberus->update($encrypted);
 
 		return $response;
+	}
+
+	/**
+	 * Get
+	 *
+	 * Retrieve a config item
+	 *
+	 * @access	public
+	 * @param	string	$file		Config file
+	 * @param	string	$key		Config item to get
+	 * @param	mixed	$default	Default value
+	 * return	mxied	$value		Config item or default value
+	 */
+	public function config_get($file, $item, $default = FALSE)
+	{
+		$this->EE->load->config($file);
+
+		if ( ! $value = $this->EE->config->item($item))
+		{
+			$value = $default;
+		}
+
+		return $value;
 	}
 	
 	/**
