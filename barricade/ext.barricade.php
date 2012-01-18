@@ -62,6 +62,14 @@ class Barricade_ext {
 		return $settings;
 	}
 
+	/**
+	 * Check Registration
+	 *
+	 * @access	public
+	 * @param	array	$data	Member data
+	 * @param	int		$member_id	Member ID
+	 * @return	void
+	 */
 	public function check_registration($data, $member_id)
 	{
 		$response = FALSE;

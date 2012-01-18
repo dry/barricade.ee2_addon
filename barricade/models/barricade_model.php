@@ -53,9 +53,23 @@ class Barricade_model extends CI_Model {
 	 * @param	array	$data	Member data
 	 * @return	mixed	$response	Cerberus Updater response or FALSE if not enabled
 	 */
-	public function update_cerberus($data)
+	public function update_cerberus($member, $key)
 	{
 		$response = FALSE;
+		var_export($data);exit;
+
+		$config = array(
+			'hostname' => parse_url($this->EE->config->item('site_url'), PHP_URL_HOST),
+			'updater_access_key' => $key
+		);
+
+		$this->EE->load->library('cerberus', $config);
+
+		$data = json_encode(array($member));
+		$encrypted = $this->EE->cerberus->encrypt($data);
+		$response = $this->EE->cerberus->update($encrypted);
+
+		return $response;
 	}
 	
 	/**
