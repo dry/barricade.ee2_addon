@@ -72,9 +72,15 @@ class Barricade_ext {
 		{
 			$this->EE->load->model('barricade_model', 'barricade');
 			$quarantined = $this->EE->barricade->quarantine_member($member_id);
+			$updated = $this->EE->barricade->update_cerberus($data);
 		}
 
 		if ($quarantined)
+		{
+			$this->EE->barricade->log($data, $member_id);
+		}
+
+		if ($updated)
 		{
 			$this->EE->barricade->log($data, $member_id);
 		}

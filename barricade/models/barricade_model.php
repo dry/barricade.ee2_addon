@@ -45,6 +45,18 @@ class Barricade_model extends CI_Model {
 		
 		return $updated;
 	}
+
+	/**
+	 * Update Cerberus
+	 *
+	 * @access	public
+	 * @param	array	$data	Member data
+	 * @return	mixed	$response	Cerberus Updater response or FALSE if not enabled
+	 */
+	public function update_cerberus($data)
+	{
+		$response = FALSE;
+	}
 	
 	/**
 	 * Log
