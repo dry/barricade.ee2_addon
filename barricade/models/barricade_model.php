@@ -1,14 +1,36 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * @package	Barricade
+ * @author	Greg Salt <greg@purple-dogfish.co.uk>
+ */
 class Barricade_model extends CI_Model {
 	
+	/**
+	 * @var	ExpressionEngine $EE
+	 */
 	private $EE;
 	
+	/**
+	 * Constructor
+	 * 
+	 * @access	public
+	 * @return	void
+	 */
 	public function __construct()
 	{
 		$this->EE =& get_instance();
 	}
 	
+	/**
+	 * Quarantine Member
+	 *
+	 * Move a member into banned group
+	 *
+	 * @access	public
+	 * @param	int $member_id Member ID
+	 * @return	bool TRUE if the member group is updated
+	 */
 	public function quarantine_member($member_id)
 	{
 		$updated = FALSE;
@@ -24,6 +46,16 @@ class Barricade_model extends CI_Model {
 		return $updated;
 	}
 	
+	/**
+	 * Log
+	 *
+	 * Save a message into the CP log
+	 *
+	 * @access	public
+	 * @param	string $data Message
+	 * @param	int $member_id Member ID
+	 * @return	void
+	 */
 	public function log($data, $member_id)
 	{
 		$this->EE->lang->loadfile('barricade');
