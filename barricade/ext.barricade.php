@@ -31,35 +31,75 @@ class Barricade_ext {
 	public function __construct($settings = '')
 	{
 		$this->EE =& get_instance();
+		$this->EE->load->add_package_path(PATH_THIRD.'barricade/');	
+		$this->EE->load->model('barricade_model', 'barricade');
 		$this->settings = $settings;
 		$this->setup_donation_button();
 	}
 	
 	/**
-	 * Settings
+	 * Settings Form
 	 *
 	 * Set up the extension settings
 	 *
 	 * @access	public
-	 * @return	array	$settings	Settings
+	 * @return	string
 	 */
-	public function settings()
+	public function settings_form($current)
 	{
-		$settings = array();
+		$site_id = $this->EE->config->item('site_id');
 
-		$settings['barricade_updater_enabled'] = array('s', array('n' => lang('no'), 'y' => lang('yes')), 'n');
-
-		if ( ! isset($this->settings['barricade_updater_access_key']) OR $this->settings['barricade_updater_access_key'] == '')
+		if (isset($current[$site_id]))
 		{
-			$instructions = sprintf(lang('barricade_get_an_access_key'), $this->EE->config->item('site_url'));
-			$settings['barricade_updater_access_key'] = array('t', array('rows' => 5), $instructions);
+			$settings = $current[$site_id];
 		}
 		else
 		{
-			$settings['barricade_updater_access_key'] = array('i', '', '');
+			$settings = array();
 		}
 
-		return $settings;
+		$vars = array();
+		$vars['form_url'] = 'C=addons_extensions';
+		$vars['form_url'] .= AMP.'M=save_extension_settings';
+		$vars['form_url'] .= AMP.'file=barricade';
+
+		if (isset($settings['enabled']))
+		{
+			$vars['enabled'] = $settings['enabled'];
+		}
+		else
+		{
+			$vars['enabled'] = '0';
+		}
+
+		$vars['enabled_options'] = array(lang('no'), lang('yes'));
+
+		if (isset($settings['access_key']))
+		{
+			$vars['access_key'] = $settings['access_key'];
+		}
+		else
+		{
+			$vars['access_key'] = '';
+		}
+
+		return $this->EE->load->view('settings', $vars, TRUE);
+	}
+
+	/**
+	 * Save Settings
+	 *
+	 * @access	public
+	 * @return	void
+	 */
+	public function save_settings()
+	{
+		if (empty($_POST))
+		{
+			show_error(lang('unauthorized_access'));
+		}
+
+		$this->EE->barricade->save_settings($_POST);
 	}
 
 	/**
@@ -78,7 +118,6 @@ class Barricade_ext {
 		
 		if ($response)
 		{
-			$this->EE->load->model('barricade_model', 'barricade');
 			$quarantined = $this->EE->barricade->quarantine_member($member_id);
 			$updated = $this->EE->barricade->update_cerberus($data);
 		}
@@ -94,6 +133,15 @@ class Barricade_ext {
 		}
 	}
 	
+	/**
+	 * Get Response
+	 *
+	 * Query the SFS API and then send the response to be parsed
+	 *
+	 * @access	private
+	 * @param	array	Member data to be checked
+	 * @return	bool	TRUE if spammer in SFS
+	 */
 	private function get_response($data)
 	{
 		foreach($data AS $key => $value)

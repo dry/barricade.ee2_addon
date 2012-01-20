@@ -21,6 +21,44 @@ class Barricade_model extends CI_Model {
 	{
 		$this->EE =& get_instance();
 	}
+
+	/**
+	 * Get Settings
+	 *
+	 * @access	public
+	 * @return	mixed
+	 */
+	public function get_settings()
+	{
+		$this->EE->db->select('settings');
+		$this->EE->db->where('class', 'Barricade_ext');
+		$settings = $this->EE->db->get('extensions')->row('settings');
+
+		return unserialize($settings);
+	}
+
+	/**
+	 * Save Settings
+	 *
+	 * @access	public
+	 * @param	array
+	 * @return	void
+	 */
+	public function save_settings($settings)
+	{
+		$template = array(
+			'enabled',
+			'access_key'
+		);
+
+		$save_data = $this->extract_array_template($template, $settings);
+		$site_id = $this->EE->config->item('site_id');
+		$all = $this->get_settings();
+		$all[$site_id] = $save_data;
+
+		$this->EE->db->where('class', 'Barricade_ext');
+		$this->EE->db->update('extensions', array('settings' => serialize($all)));
+	}
 	
 	/**
 	 * Quarantine Member
