@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-$barricade_config = array(
+$config = array(
 
 	// Member group to move banned members into
 	//'barricade_banned_group' => '2',

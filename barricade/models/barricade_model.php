@@ -61,7 +61,19 @@ class Barricade_model extends CI_Model {
 	public function update_cerberus($member, $key)
 	{
 		$response = FALSE;
-		var_export($data);exit;
+
+		// $member contains more data than we need so let's extract
+		// the keys we need
+
+		$required = array(
+			'username',
+			'screen_name',
+			'email',
+			'ip_address',
+			'url' 
+		);
+
+		$cerberus_data = $this->extract_array_template($required, $member);
 
 		$config = array(
 			'hostname' => parse_url($this->EE->config->item('site_url'), PHP_URL_HOST),
@@ -70,11 +82,40 @@ class Barricade_model extends CI_Model {
 
 		$this->EE->load->library('cerberus', $config);
 
-		$data = json_encode(array($member));
+		$data = json_encode(array($cerberus_data));
 		$encrypted = $this->EE->cerberus->encrypt($data);
 		$response = $this->EE->cerberus->update($encrypted);
 
 		return $response;
+	}
+
+	/**
+	 * Extract Array Template
+	 *
+	 * Use an array template to extract keys & values from another array
+	 *
+	 * @access	public
+	 * @param	array	$template	The array template
+	 * @param	array	$data		The array with data you want to extract
+	 * @return	array
+	 */
+	function extract_array_template($template, $data)
+	{
+		foreach($template AS $key)
+		{
+			$$key = '';
+		}
+
+		extract($data, EXTR_IF_EXISTS);
+
+		$extracted = array();
+
+		foreach($template AS $key)
+		{
+			$extracted[$key] = $$key;
+		}
+
+		return $extracted;
 	}
 
 	/**

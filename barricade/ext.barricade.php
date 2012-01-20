@@ -103,7 +103,14 @@ class Barricade_ext {
 
 		try
 		{
-			$xml = file_get_contents('http://stopforumspam.com/api?username='.$username.'&ip='.$ip_address.'&email='.urlencode($email).'&f=json');
+			$request_url = sprintf(
+				'http://stopforumspam.com/api?username=%s&ip=%s&email=&%s&f=json',
+				$username,
+				$ip_address,
+				$email
+			);
+			$xml = file_get_contents($request_url);
+
 			return $this->parse_response($xml);
 		}
 		catch(Exception $e)
@@ -118,7 +125,7 @@ class Barricade_ext {
 		$spammer = FALSE;
 		
 		$response = json_decode($xml);
-		
+	
 		if ($response->success)
 		{
 			$email = $response->email->appears;
@@ -130,7 +137,7 @@ class Barricade_ext {
 				$spammer = TRUE;
 			}
 		}
-		
+
 		return $spammer;
 	}
 	
