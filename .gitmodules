@@ -1,3 +1,0 @@
-[submodule "barricade/libraries"]
-	path = barricade/libraries
-	url = git@codebasehq.com:dogfish/cerberus/cerberus-library.git
